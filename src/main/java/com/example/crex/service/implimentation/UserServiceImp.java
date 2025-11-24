@@ -136,12 +136,70 @@ public class UserServiceImp implements UserService {
 //        return new LogInResponse(null, "Logout successful");
 //    }
 
+//    @Override
+//    public LogInResponse logOut(String token) {
+//
+//        // Remove Bearer prefix if included
+//        if (token.startsWith("Bearer ")) {
+//            token = token.substring(7);
+//        }
+//
+//        // Extract email from JWT
+//        String email = jwtService.extractUsername(token);
+//
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//    /*
+//     =======================
+//     1️⃣ Add token to blacklist
+//     =======================
+//    */
+//        BlacklistedToken blk = new BlacklistedToken();
+//        blk.setToken(token);
+//        blk.setExpiryDate(LocalDateTime.now().plusHours(24)); // same as JWT expiry
+//        blacklistedTokenRepository.save(blk);
+//
+//    /*
+//     =======================
+//     2️⃣ Send logout email
+//     =======================
+//    */
+//        //String role = extractAllClaims(token).get("role", String.class);
+//
+//        String subject = "Logout Activity on CREX ✔";
+//        String message =
+//                "Hello " + user.getFullName() + ",\n\n" +
+//                        "You have successfully logged out from your CREX account.\n" +
+//                        "If this was not you, please reset your password immediately.\n\n" +
+//                        "Logout Time: " + LocalDateTime.now() + "\n\n" +
+//                        "Regards,\nTeam CREX ⚡";
+//
+//        try {
+//            emailService.sendEmail(user.getEmail(), subject, message);
+//        } catch (Exception e) {
+//            System.out.println("Logout email failed: " + e.getMessage());
+//        }
+//
+//    /*
+//     =======================
+//     3️⃣ Response
+//     =======================
+//    */
+//        return new LogInResponse(null, "Logout successful");
+//    }
+
     @Override
     public LogInResponse logOut(String token) {
 
         // Remove Bearer prefix if included
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
+        }
+
+        // 🛑 Check if token already blacklisted
+        if (blacklistedTokenRepository.existsByToken(token)) {
+            return new LogInResponse(null, "Already logged out");
         }
 
         // Extract email from JWT
@@ -157,7 +215,7 @@ public class UserServiceImp implements UserService {
     */
         BlacklistedToken blk = new BlacklistedToken();
         blk.setToken(token);
-        blk.setExpiryDate(LocalDateTime.now().plusHours(24)); // same as JWT expiry
+        blk.setExpiryDate(LocalDateTime.now().plusHours(24)); // match JWT expiry
         blacklistedTokenRepository.save(blk);
 
     /*
