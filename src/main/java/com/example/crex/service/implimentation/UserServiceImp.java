@@ -7,8 +7,10 @@ import com.example.crex.dto.request.UserRequest;
 import com.example.crex.dto.response.LogInResponse;
 import com.example.crex.dto.response.UserResponse;
 import com.example.crex.exception.ResourceNotFoundException;
+import com.example.crex.model.entity.BlacklistedToken;
 import com.example.crex.model.entity.User;
 import com.example.crex.model.enums.User_Role;
+import com.example.crex.repository.BlacklistedTokenRepository;
 import com.example.crex.repository.UserRepository;
 import com.example.crex.service.signature.EmailService;
 import com.example.crex.service.signature.UserService;
@@ -29,6 +31,7 @@ public class UserServiceImp implements UserService {
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Override
     public UserResponse addUser(UserRequest userRequest) {
@@ -105,22 +108,68 @@ public class UserServiceImp implements UserService {
         return new LogInResponse(token, "Login successful");
     }
 
+//    @Override
+//    public LogInResponse logOut(String token) {
+//
+//        String email = jwtService.extractUsername(token);
+//
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        System.out.println("Logout email sending to: " + user.getEmail());
+//
+//        // send logout email
+//        String subject = "Logout Activity on CREX ✔";
+//        String message =
+//                "Hello " + user.getFullName() + ",\n\n" +
+//                        "You have successfully logged out from your CREX account.\n" +
+//                        "If this was not you, please change your password immediately.\n\n" +
+//                        "Logout Time: " + LocalDateTime.now() + "\n\n" +
+//                        "Regards,\nTeam CREX ⚡";
+//
+//        try {
+//            emailService.sendEmail(user.getEmail(), subject, message);
+//        } catch (Exception e) {
+//            System.out.println("Logout email failed: " + e.getMessage());
+//        }
+//
+//        return new LogInResponse(null, "Logout successful");
+//    }
+
     @Override
     public LogInResponse logOut(String token) {
 
+        // Remove Bearer prefix if included
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        // Extract email from JWT
         String email = jwtService.extractUsername(token);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        System.out.println("Logout email sending to: " + user.getEmail());
+    /*
+     =======================
+     1️⃣ Add token to blacklist
+     =======================
+    */
+        BlacklistedToken blk = new BlacklistedToken();
+        blk.setToken(token);
+        blk.setExpiryDate(LocalDateTime.now().plusHours(24)); // same as JWT expiry
+        blacklistedTokenRepository.save(blk);
 
-        // send logout email
+    /*
+     =======================
+     2️⃣ Send logout email
+     =======================
+    */
         String subject = "Logout Activity on CREX ✔";
         String message =
                 "Hello " + user.getFullName() + ",\n\n" +
                         "You have successfully logged out from your CREX account.\n" +
-                        "If this was not you, please change your password immediately.\n\n" +
+                        "If this was not you, please reset your password immediately.\n\n" +
                         "Logout Time: " + LocalDateTime.now() + "\n\n" +
                         "Regards,\nTeam CREX ⚡";
 
@@ -130,8 +179,14 @@ public class UserServiceImp implements UserService {
             System.out.println("Logout email failed: " + e.getMessage());
         }
 
+    /*
+     =======================
+     3️⃣ Response
+     =======================
+    */
         return new LogInResponse(null, "Logout successful");
     }
+
 
 
 }
