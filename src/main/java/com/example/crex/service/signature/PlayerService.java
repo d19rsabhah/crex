@@ -1,0 +1,12 @@
+package com.example.crex.service.signature;
+
+import com.example.crex.dto.request.PlayerRequest;
+import com.example.crex.dto.request.UserRequest;
+import com.example.crex.dto.response.PlayerResponse;
+import com.example.crex.dto.response.UserResponse;
+
+public interface PlayerService {
+
+    PlayerResponse addPlayer(PlayerRequest playerRequest, Integer teamId, String token);
+
+}
