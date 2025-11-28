@@ -11,6 +11,7 @@ import com.example.crex.repository.UserRepository;
 import com.example.crex.service.signature.EmailService;
 import com.example.crex.service.signature.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,40 +26,92 @@ public class TeamServiceImp implements TeamService{
     @Override
     public TeamResponse addTeam(TeamRequest request, String token) {
 
-        // remove Bearer prefix
-        if (token.startsWith("Bearer "))
-            token = token.substring(7);
+//        // remove Bearer prefix
+//        if (token.startsWith("Bearer "))
+//            token = token.substring(7);
+//
+//        // extract email from JWT
+//        String email = jwtService.extractUsername(token);
+//
+//        // find user
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//
+//        // convert request to entity
+//        Team team = TeamConverter.teamRequestToTeam(request);
+//        team.setCreatedBy(user);
+//
+//        // save to DB
+//        Team savedTeam = teamRepository.save(team);
+//
+//        // send mail to creator
+//        try {
+//            String subject = "Team Added Successfully ⚡";
+//            String msg = "Hello " + user.getFullName() + ",\n\n" +
+//                    "You have successfully added a team in CREX.\n" +
+//                    "Team: " + savedTeam.getTeamName() + "\n" +
+//                    "Country: " + savedTeam.getCountry() + "\n\n" +
+//                    "Regards,\nTeam CREX";
+//
+//            emailService.sendEmail(user.getEmail(), subject, msg);
+//        } catch (Exception e) {
+//            System.out.println("Team email failed: " + e.getMessage());
+//        }
+//
+//        // map to response DTO
+//        return TeamConverter.teamToTeamResponse(savedTeam);
 
-        // extract email from JWT
-        String email = jwtService.extractUsername(token);
 
-        // find user
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        // convert request to entity
-        Team team = TeamConverter.teamRequestToTeam(request);
-        team.setCreatedBy(user);
-
-        // save to DB
-        Team savedTeam = teamRepository.save(team);
-
-        // send mail to creator
         try {
-            String subject = "Team Added Successfully ⚡";
-            String msg = "Hello " + user.getFullName() + ",\n\n" +
-                    "You have successfully added a team in CREX.\n" +
-                    "Team: " + savedTeam.getTeamName() + "\n" +
-                    "Country: " + savedTeam.getCountry() + "\n\n" +
-                    "Regards,\nTeam CREX";
+            // 1️⃣ Remove Bearer prefix
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
-            emailService.sendEmail(user.getEmail(), subject, msg);
+            // 2️⃣ Extract email from JWT
+            String email = jwtService.extractUsername(token);
+            if (email == null) {
+                throw new RuntimeException("Invalid token. Please login again.");
+            }
+
+            // 3️⃣ Fetch User
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            // 4️⃣ Convert DTO → Entity
+            Team team = TeamConverter.teamRequestToTeam(request);
+            team.setCreatedBy(user);
+
+            // 5️⃣ Save team safely with SQL exception handling
+            Team savedTeam;
+            try {
+                savedTeam = teamRepository.save(team);
+            } catch (DataIntegrityViolationException ex) {
+                // This happens when duplicate team or unique key violation
+                throw new RuntimeException("Team already exists. Please choose another name or country.");
+            }
+
+            // 6️⃣ Send email (email failure should NOT break API)
+            try {
+                String subject = "Team Added Successfully ⚡";
+                String msg = "Hello " + user.getFullName() + ",\n\n" +
+                        "A new team has been successfully created in CREX.\n\n" +
+                        "Team: " + savedTeam.getTeamName() + "\n" +
+                        "Country: " + savedTeam.getCountry() + "\n\n" +
+                        "Regards,\nTeam CREX";
+
+                emailService.sendEmail(user.getEmail(), subject, msg);
+            } catch (Exception e) {
+                System.out.println("⚠ Email sending failed: " + e.getMessage());
+            }
+
+            // 7️⃣ Convert to response DTO
+            return TeamConverter.teamToTeamResponse(savedTeam);
+
         } catch (Exception e) {
-            System.out.println("Team email failed: " + e.getMessage());
+            // ANY failure returns clean error instead of breaking app
+            throw new RuntimeException("Failed to add team: " + e.getMessage());
         }
-
-        // map to response DTO
-        return TeamConverter.teamToTeamResponse(savedTeam);
 
     }
 }

@@ -15,12 +15,18 @@ public class TeamController {
 
     private final TeamService teamService;
 
+
+
     @PostMapping("/add")
     public ResponseEntity<?> addTeam(
             @RequestBody TeamRequest request,
             @RequestHeader("Authorization") String token) {
+        System.out.println("🔥 CONTROLLER EXECUTED");
+
 
         TeamResponse response = teamService.addTeam(request, token);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
+
+

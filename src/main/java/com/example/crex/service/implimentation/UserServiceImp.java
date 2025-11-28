@@ -197,10 +197,13 @@ public class UserServiceImp implements UserService {
             token = token.substring(7);
         }
 
+        token = token.trim();
+
         // 🛑 Check if token already blacklisted
         if (blacklistedTokenRepository.existsByToken(token)) {
             return new LogInResponse(null, "Already logged out");
         }
+
 
         // Extract email from JWT
         String email = jwtService.extractUsername(token);
@@ -213,6 +216,8 @@ public class UserServiceImp implements UserService {
      1️⃣ Add token to blacklist
      =======================
     */
+
+
         BlacklistedToken blk = new BlacklistedToken();
         blk.setToken(token);
         blk.setExpiryDate(LocalDateTime.now().plusHours(24)); // match JWT expiry

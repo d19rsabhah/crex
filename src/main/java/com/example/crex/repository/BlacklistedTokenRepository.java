@@ -3,7 +3,11 @@ package com.example.crex.repository;
 import com.example.crex.model.entity.BlacklistedToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BlacklistedTokenRepository extends JpaRepository<BlacklistedToken, Integer> {
+import java.util.Optional;
+
+public interface BlacklistedTokenRepository extends JpaRepository<BlacklistedToken, Long> {
     boolean existsByToken(String token);
+    Optional<BlacklistedToken> findByToken(String token);
 }
+
 

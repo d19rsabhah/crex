@@ -26,15 +26,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // PUBLIC APIs
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        .requestMatchers(
+                                "/api/v1/auth/user/logIn",
+                                "/api/v1/auth/user/register",
+                                "/api/v1/auth/user/logOut"
+                        ).permitAll()
+
+                        // PUBLIC AUTH APIS
+                        .requestMatchers("/api/v1/public/**").permitAll()
 
                         // USER ROLE APIs
-                        .requestMatchers(HttpMethod.POST, "/players/**", "/teams/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/players/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**").hasRole("USER")
+
+
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
+                        .hasRole("USER")
 
                         // ADMIN ROLE APIs
-                        .requestMatchers("/tournaments/**", "/series/**", "/matches/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
+                        .hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
