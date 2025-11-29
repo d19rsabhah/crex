@@ -27,29 +27,33 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
+                        // AUTH APIS
                         .requestMatchers(
                                 "/api/v1/auth/user/logIn",
                                 "/api/v1/auth/user/register",
                                 "/api/v1/auth/user/logOut"
                         ).permitAll()
 
-                        // PUBLIC AUTH APIS
+                        // PUBLIC
                         .requestMatchers("/api/v1/public/**").permitAll()
 
+                        // ⭐ PUBLIC PLAYER SEARCH (ANYONE CAN USE)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/players/search").permitAll()
+
                         // USER ROLE APIs
-                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
+                        .hasRole("USER")
 
                         // ADMIN ROLE APIs
                         .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
                         .hasRole("ADMIN")
 
-                        // USER + ADMIN allowed to GET players
+                        // USER + ADMIN allowed to GET any player
                         .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
 
                         .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
-
 
                         .anyRequest().authenticated()
                 )
@@ -58,6 +62,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

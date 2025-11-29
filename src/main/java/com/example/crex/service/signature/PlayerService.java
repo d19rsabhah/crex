@@ -5,6 +5,8 @@ import com.example.crex.dto.request.UserRequest;
 import com.example.crex.dto.response.PlayerResponse;
 import com.example.crex.dto.response.UserResponse;
 
+import java.util.List;
+
 public interface PlayerService {
 
     PlayerResponse addPlayer(PlayerRequest playerRequest, Integer teamId, String token);
@@ -13,4 +15,5 @@ public interface PlayerService {
 
     PlayerResponse updatePlayer(Integer playerId, PlayerRequest request, String token);
 
+    List<PlayerResponse> getPlayersByName(String name);
 }

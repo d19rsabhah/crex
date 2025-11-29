@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 //@Service
 //public class PlayerServiceImp implements PlayerService {
 //
@@ -263,6 +265,20 @@ public class PlayerServiceImp implements PlayerService {
 
         // 7️⃣ return updated DTO
         return PlayerConverter.playerToPlayerResponse(savedPlayer);
+    }
+
+    @Override
+    public List<PlayerResponse> getPlayersByName(String name) {
+
+        List<Player> players = playerRepository.findByPlayerNameContainingIgnoreCase(name);
+
+        if (players.isEmpty()) {
+            throw new ResourceNotFoundException("No players found with name: " + name);
+        }
+
+        return players.stream()
+                .map(PlayerConverter::playerToPlayerResponse)
+                .toList();
     }
 
 

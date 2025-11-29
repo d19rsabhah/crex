@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/players")
 @RequiredArgsConstructor
@@ -53,7 +55,11 @@ public class PlayerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPlayers(@RequestParam String name) {
 
-
+        List<PlayerResponse> response = playerService.getPlayersByName(name);
+        return ResponseEntity.ok(response);
+    }
 
 }
