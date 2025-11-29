@@ -114,4 +114,45 @@ public class TeamServiceImp implements TeamService{
         }
 
     }
+
+    @Override
+    public TeamResponse getTeamById(Integer teamId, String token) {
+
+        if (token.startsWith("Bearer ")) token = token.substring(7);
+        String email = jwtService.extractUsername(token);
+
+        // verify requester is valid user
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        return TeamConverter.teamToTeamResponse(team);
+    }
+
+    // ------------------------------------------------------------------------------------
+    // SEARCH BY TEAM NAME (PUBLIC)
+    // ------------------------------------------------------------------------------------
+    @Override
+    public TeamResponse searchByName(String name) {
+
+        Team team = teamRepository.findByTeamNameIgnoreCase(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        return TeamConverter.teamToTeamResponse(team);
+    }
+
+    // ------------------------------------------------------------------------------------
+    // SEARCH BY COUNTRY NAME (PUBLIC)
+    // ------------------------------------------------------------------------------------
+    @Override
+    public TeamResponse searchByCountry(String country) {
+
+        Team team = teamRepository.findByCountryIgnoreCase(country)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        return TeamConverter.teamToTeamResponse(team);
+    }
+
 }

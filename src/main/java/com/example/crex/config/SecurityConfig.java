@@ -28,34 +28,43 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // AUTH APIS
-                        .requestMatchers(
-                                "/api/v1/auth/user/logIn",
-                                "/api/v1/auth/user/register",
-                                "/api/v1/auth/user/logOut"
-                        ).permitAll()
+                                .requestMatchers(
+                                        "/api/v1/auth/user/logIn",
+                                        "/api/v1/auth/user/register",
+                                        "/api/v1/auth/user/logOut"
+                                ).permitAll()
 
-                        // PUBLIC
-                        .requestMatchers("/api/v1/public/**").permitAll()
+// PUBLIC
+                                .requestMatchers("/api/v1/public/**").permitAll()
 
-                        // ⭐ PUBLIC PLAYER SEARCH (ANYONE CAN USE)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/players/search").permitAll()
+// PUBLIC PLAYER SEARCH
+                                .requestMatchers(HttpMethod.GET, "/api/v1/players/search/**").permitAll()
 
-                        // USER ROLE APIs
-                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
-                        .hasRole("USER")
+// PUBLIC TEAM SEARCH
+                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/search/name/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/search/country/**").permitAll()
 
-                        // ADMIN ROLE APIs
-                        .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
-                        .hasRole("ADMIN")
+// TEAM BY ID (USER + ADMIN)
+                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/*")
+                                .hasAnyRole("USER", "ADMIN")
 
-                        // USER + ADMIN allowed to GET any player
-                        .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
-                        .hasAnyRole("USER", "ADMIN")
+// USER ROLE APIs
+                                .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
+                                .hasRole("USER")
 
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
-                        .hasAnyRole("USER", "ADMIN")
+// ADMIN ROLE APIs
+                                .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
+                                .hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+// USER + ADMIN GET PLAYERS
+                                .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+// USER + ADMIN UPDATE PLAYER
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
