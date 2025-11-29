@@ -39,16 +39,15 @@ public class SecurityConfig {
                         // USER ROLE APIs
                         .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**").hasRole("USER")
 
-
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
-                        .hasRole("USER")
-
                         // ADMIN ROLE APIs
                         .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
                         .hasRole("ADMIN")
 
                         // USER + ADMIN allowed to GET players
                         .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
+                        .hasAnyRole("USER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
 
 

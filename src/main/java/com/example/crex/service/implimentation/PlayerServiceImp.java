@@ -184,34 +184,86 @@ public class PlayerServiceImp implements PlayerService {
     @Override
     public PlayerResponse getPlayerById(Integer playerId, String token) {
 
-        try {
-            // 1️⃣ Clean token
-            if (token.startsWith("Bearer "))
-                token = token.substring(7);
-            token = token.trim();
+        // Clean token
+        if (token.startsWith("Bearer "))
+            token = token.substring(7);
+        token = token.trim();
 
-            // 2️⃣ Validate token
-            String email;
-            try {
-                email = jwtService.extractUsername(token);
-            } catch (Exception ex) {
-                throw new RuntimeException("Invalid or expired token. Please login again.");
-            }
+        // validate token & extract email
+        String email = jwtService.extractUsername(token);
 
-            // 3️⃣ Fetch requesting user
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        // get user
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-            // 4️⃣ Fetch player
-            Player player = playerRepository.findById(playerId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Player not found"));
+        // get player
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Player not found"));
 
-            // 5️⃣ Convert to response
-            return PlayerConverter.playerToPlayerResponse(player);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch player: " + e.getMessage());
-        }
+        // return DTO
+        return PlayerConverter.playerToPlayerResponse(player);
     }
+
+    @Override
+    public PlayerResponse updatePlayer(Integer playerId, PlayerRequest request, String token) {
+
+        // 1️⃣ Clean token
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        token = token.trim();
+
+        // 2️⃣ Validate token & fetch logged-in user
+        String email = jwtService.extractUsername(token);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 3️⃣ Fetch player
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Player not found"));
+
+        // 4️⃣ Partial update
+        if (request.getPlayerName() != null) player.setPlayerName(request.getPlayerName());
+        if (request.getDob() != null) player.setDob(request.getDob());
+        if (request.getGender() != null) player.setGender(request.getGender());
+        if (request.getHeight() > 0) player.setHeight(request.getHeight());
+        if (request.getWeight() > 0) player.setWeight(request.getWeight());
+        if (request.getRole() != null) player.setRole(request.getRole());
+        if (request.getJerseyNumber() > 0) player.setJerseyNumber(request.getJerseyNumber());
+        if (request.getBattingStyle() != null) player.setBattingStyle(request.getBattingStyle());
+        if (request.getBowlingStyle() != null) player.setBowlingStyle(request.getBowlingStyle());
+        if (request.getLastMatchDate() != null) player.setLastMatchDate(request.getLastMatchDate());
+        if (request.getIsActive() != null) player.setIsActive(request.getIsActive());
+        if (request.getNationality() != null) player.setNationality(request.getNationality());
+        if (request.getPlaceOfBirth() != null) player.setPlaceOfBirth(request.getPlaceOfBirth());
+
+        // Change team if new teamId present
+        if (request.getTeamId() > 0) {
+            Team team = teamRepository.findById(request.getTeamId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+            player.setTeam(team);
+        }
+
+        // 5️⃣ Save updated player
+        Player savedPlayer = playerRepository.save(player);
+
+        // 6️⃣ Send email to USER (not to player)
+        try {
+            String subject = "Player Updated Successfully ✔";
+            String msg = "Hello " + user.getFullName() + ",\n\n" +
+                    "Player \"" + savedPlayer.getPlayerName() + "\" has been successfully updated.\n" +
+                    "Updated By: " + user.getFullName() + "\n\n" +
+                    "Regards,\nTeam CREX ⚡";
+
+            emailService.sendEmail(user.getEmail(), subject, msg);
+        } catch (Exception e) {
+            System.out.println("⚠ Email sending failed: " + e.getMessage());
+        }
+
+        // 7️⃣ return updated DTO
+        return PlayerConverter.playerToPlayerResponse(savedPlayer);
+    }
+
 
 }

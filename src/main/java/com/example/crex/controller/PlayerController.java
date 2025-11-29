@@ -40,4 +40,20 @@ public class PlayerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PatchMapping("/update/{playerId}")
+//    @PutMapping("/update/{playerId}")
+    public ResponseEntity<?> updatePlayer(
+            @PathVariable Integer playerId,
+            @RequestBody PlayerRequest request,
+            @RequestHeader("Authorization") String token) {
+
+        System.out.println("🔥 UPDATE PLAYER CONTROLLER EXECUTED");
+
+        PlayerResponse response = playerService.updatePlayer(playerId, request, token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+
 }

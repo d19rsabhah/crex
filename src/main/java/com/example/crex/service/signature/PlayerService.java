@@ -11,4 +11,6 @@ public interface PlayerService {
 
     PlayerResponse getPlayerById(Integer playerId, String token);
 
+    PlayerResponse updatePlayer(Integer playerId, PlayerRequest request, String token);
+
 }
