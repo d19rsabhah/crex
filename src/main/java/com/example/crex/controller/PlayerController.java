@@ -28,4 +28,16 @@ public class PlayerController {
         PlayerResponse response = playerService.addPlayer(playerRequest, teamId, token);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{playerId}")
+    public ResponseEntity<?> getPlayerById(
+            @PathVariable Integer playerId,
+            @RequestHeader("Authorization") String token) {
+
+        System.out.println("🔥 GET PLAYER CONTROLLER EXECUTED");
+
+        PlayerResponse response = playerService.getPlayerById(playerId, token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

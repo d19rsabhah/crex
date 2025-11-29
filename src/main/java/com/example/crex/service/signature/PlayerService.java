@@ -9,4 +9,6 @@ public interface PlayerService {
 
     PlayerResponse addPlayer(PlayerRequest playerRequest, Integer teamId, String token);
 
+    PlayerResponse getPlayerById(Integer playerId, String token);
+
 }

@@ -180,4 +180,38 @@ public class PlayerServiceImp implements PlayerService {
             throw new RuntimeException("Failed to add player: " + e.getMessage());
         }
     }
+
+    @Override
+    public PlayerResponse getPlayerById(Integer playerId, String token) {
+
+        try {
+            // 1️⃣ Clean token
+            if (token.startsWith("Bearer "))
+                token = token.substring(7);
+            token = token.trim();
+
+            // 2️⃣ Validate token
+            String email;
+            try {
+                email = jwtService.extractUsername(token);
+            } catch (Exception ex) {
+                throw new RuntimeException("Invalid or expired token. Please login again.");
+            }
+
+            // 3️⃣ Fetch requesting user
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            // 4️⃣ Fetch player
+            Player player = playerRepository.findById(playerId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Player not found"));
+
+            // 5️⃣ Convert to response
+            return PlayerConverter.playerToPlayerResponse(player);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch player: " + e.getMessage());
+        }
+    }
+
 }

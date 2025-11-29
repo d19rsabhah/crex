@@ -47,6 +47,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
                         .hasRole("ADMIN")
 
+                        // USER + ADMIN allowed to GET players
+                        .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
+                        .hasAnyRole("USER", "ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
