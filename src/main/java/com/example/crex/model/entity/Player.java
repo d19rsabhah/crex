@@ -29,12 +29,12 @@ public class Player {
     @Column(nullable = false, unique = true)
     String email;
 
+    @Enumerated(EnumType.STRING)
     Gender gender;
 
     double height;
 
     double weight;
-
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
@@ -49,8 +49,6 @@ public class Player {
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     BowlingStyle bowlingStyle;
-
-    LocalDate debutDate;
 
     LocalDate lastMatchDate;
 

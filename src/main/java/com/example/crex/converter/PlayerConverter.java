@@ -22,6 +22,8 @@ public class PlayerConverter {
                 .jerseyNumber(playerRequest.getJerseyNumber())
                 .battingStyle(playerRequest.getBattingStyle())
                 .bowlingStyle(playerRequest.getBowlingStyle())
+                .lastMatchDate(playerRequest.getLastMatchDate())
+                .isActive(playerRequest.getIsActive())
                 .nationality(playerRequest.getNationality())
                 .placeOfBirth(playerRequest.getPlaceOfBirth())
                 .build();
