@@ -71,6 +71,16 @@ public class TeamController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{teamId}")
+    public ResponseEntity<?> deleteTeam(
+            @PathVariable Integer teamId,
+            @RequestHeader("Authorization") String token) {
+
+        teamService.deleteTeam(teamId, token);
+        return ResponseEntity.ok("Team deleted successfully");
+    }
+
+
 }
 
 

@@ -44,7 +44,7 @@ public class UserServiceImp implements UserService {
 
         // Default role for registration (you can change later)
         if (user.getUserRole() == null) {
-            user.setUserRole(User_Role.USER);
+            user.setUserRole(User_Role.ADMIN);
         }
         user.setCreatedDate(LocalDateTime.now());
         user.setLastLogin(null);

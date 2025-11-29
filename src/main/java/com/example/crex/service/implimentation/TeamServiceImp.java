@@ -209,5 +209,27 @@ public class TeamServiceImp implements TeamService{
         return TeamConverter.teamToTeamResponse(savedTeam);
     }
 
+    @Override
+    public void deleteTeam(Integer teamId, String token) {
+
+        // clean token
+        if (token.startsWith("Bearer ")) token = token.substring(7);
+
+        String email = jwtService.extractUsername(token);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Only ADMIN can delete
+        if (!user.getUserRole().name().equals("ADMIN")) {
+            throw new RuntimeException("Only admin can delete teams");
+        }
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        teamRepository.delete(team);
+    }
+
 
 }

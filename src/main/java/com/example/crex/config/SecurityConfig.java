@@ -30,7 +30,7 @@ public class SecurityConfig {
                         // AUTH APIS
                                 .requestMatchers(
                                         "/api/v1/auth/user/logIn",
-                                        "/api/v1/auth/user/register",
+                                        "/api/v1/auth/user/registration",
                                         "/api/v1/auth/user/logOut"
                                 ).permitAll()
 
@@ -49,6 +49,9 @@ public class SecurityConfig {
                                 .hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/teams/**")
                                 .hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/teams/**")
+                                .hasRole("ADMIN")
+
 
 
 // USER ROLE APIs

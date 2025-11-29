@@ -11,6 +11,7 @@ public interface TeamService {
     TeamResponse searchByName(String name);// PUBLIC
     TeamResponse searchByCountry(String country);
     TeamResponse updateTeam(Integer teamId, TeamRequest request, String token);
+    void deleteTeam(Integer teamId, String token);
 
 
 }
