@@ -155,4 +155,59 @@ public class TeamServiceImp implements TeamService{
         return TeamConverter.teamToTeamResponse(team);
     }
 
+    @Override
+    public TeamResponse updateTeam(Integer teamId, TeamRequest request, String token) {
+
+        // 1️⃣ Clean token
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        token = token.trim();
+
+        // 2️⃣ Extract logged-in user email from JWT
+        String email = jwtService.extractUsername(token);
+
+        // 3️⃣ Verify user exists
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 4️⃣ Fetch team
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+
+        // 5️⃣ Apply partial updates
+        if (request.getTeamName() != null)
+            team.setTeamName(request.getTeamName());
+
+        if (request.getCountry() != null)
+            team.setCountry(request.getCountry());
+
+        if (request.getDescription() != null)
+            team.setDescription(request.getDescription());
+
+        if (request.getLogoUrl() != null)
+            team.setLogoUrl(request.getLogoUrl());
+
+        // 6️⃣ Save updated record
+        Team savedTeam = teamRepository.save(team);
+
+        // 7️⃣ Send update email
+        try {
+            String subject = "Team Updated Successfully ✔";
+            String msg = "Hello " + user.getFullName() + ",\n\n" +
+                    "Team \"" + savedTeam.getTeamName() + "\" has been updated successfully.\n" +
+                    "Updated by: " + user.getFullName() + "\n\n" +
+                    "Regards,\nTeam CREX ⚡";
+
+            emailService.sendEmail(user.getEmail(), subject, msg);
+
+        } catch (Exception e) {
+            System.out.println("⚠ Email sending failed: " + e.getMessage());
+        }
+
+        // 8️⃣ Convert to response DTO
+        return TeamConverter.teamToTeamResponse(savedTeam);
+    }
+
+
 }

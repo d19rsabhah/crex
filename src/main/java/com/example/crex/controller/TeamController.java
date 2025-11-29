@@ -60,6 +60,17 @@ public class TeamController {
         TeamResponse response = teamService.searchByCountry(country);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateTeam(
+            @PathVariable Integer id,
+            @RequestBody TeamRequest request,
+            @RequestHeader("Authorization") String token) {
+
+        TeamResponse response = teamService.updateTeam(id, request, token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
 
 

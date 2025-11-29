@@ -10,5 +10,7 @@ public interface TeamService {
     TeamResponse getTeamById(Integer id, String token);     // USER + ADMIN
     TeamResponse searchByName(String name);// PUBLIC
     TeamResponse searchByCountry(String country);
+    TeamResponse updateTeam(Integer teamId, TeamRequest request, String token);
+
 
 }

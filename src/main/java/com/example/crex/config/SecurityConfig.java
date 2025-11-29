@@ -47,6 +47,9 @@ public class SecurityConfig {
 // TEAM BY ID (USER + ADMIN)
                                 .requestMatchers(HttpMethod.GET, "/api/v1/teams/*")
                                 .hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/teams/**")
+                                .hasAnyRole("USER", "ADMIN")
+
 
 // USER ROLE APIs
                                 .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
