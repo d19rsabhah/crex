@@ -62,4 +62,11 @@ public class PlayerController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/country/{country}")
+    public ResponseEntity<?> getPlayersByCountry(@PathVariable String country) {
+
+        List<PlayerResponse> response = playerService.getPlayersByCountry(country);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

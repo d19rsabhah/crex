@@ -16,4 +16,7 @@ public interface PlayerService {
     PlayerResponse updatePlayer(Integer playerId, PlayerRequest request, String token);
 
     List<PlayerResponse> getPlayersByName(String name);
+
+    List<PlayerResponse> getPlayersByCountry(String country);
+
 }

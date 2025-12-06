@@ -29,57 +29,79 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
 
-                        // AUTH APIS
-                                .requestMatchers(
-                                        "/api/v1/auth/user/logIn",
-                                        "/api/v1/auth/user/registration",
-                                        "/api/v1/auth/user/logOut"
-                                ).permitAll()
+                        // =====================
+                        // AUTH APIS (PUBLIC)
+                        // =====================
+                        .requestMatchers(
+                                "/api/v1/auth/user/logIn",
+                                "/api/v1/auth/user/registration",
+                                "/api/v1/auth/user/logOut"
+                        ).permitAll()
 
-// PUBLIC
-                                .requestMatchers("/api/v1/public/**").permitAll()
+                        // =====================
+                        // PUBLIC (ANYONE CAN ACCESS)
+                        // =====================
+                        .requestMatchers("/api/v1/public/**").permitAll()
 
-// PUBLIC PLAYER SEARCH
-                                .requestMatchers(HttpMethod.GET, "/api/v1/players/search/**").permitAll()
+                        // 🔥 PUBLIC PLAYER SEARCH (PLACE FIRST)
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/players/search/**",
+                                "/api/v1/players/country/**"
+                        ).permitAll()
 
-// PUBLIC TEAM SEARCH
-                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/search/name/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/search/country/**").permitAll()
+                        // 🔥 PUBLIC TEAM SEARCH (PLACE FIRST)
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/teams/search/name/**",
+                                "/api/v1/teams/search/country/**"
+                        ).permitAll()
 
-// TEAM BY ID (USER + ADMIN)
-                                .requestMatchers(HttpMethod.GET, "/api/v1/teams/*")
-                                .hasAnyRole("USER", "ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/teams/**")
-                                .hasAnyRole("USER", "ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/teams/**")
-                                .hasRole("ADMIN")
+                        // =====================
+                        // TEAM BY ID (USER + ADMIN)
+                        // =====================
+                        .requestMatchers(HttpMethod.GET, "/api/v1/teams/*")
+                        .hasAnyRole("USER", "ADMIN")
 
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/teams/**")
+                        .hasAnyRole("USER", "ADMIN")
 
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/teams/**")
+                        .hasRole("ADMIN")
 
-// USER ROLE APIs
-                                .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
-                                .hasAnyRole("USER", "ADMIN")
+                        // =====================
+                        // USER ROLE APIs
+                        // =====================
+                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
+                        .hasAnyRole("USER", "ADMIN")
 
+                        // =====================
+                        // ADMIN-ONLY APIs
+                        // =====================
+                        .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
+                        .hasRole("ADMIN")
 
-// ADMIN ROLE APIs
-                                .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
-                                .hasRole("ADMIN")
+                        // =====================
+                        // PLAYER GET (USER + ADMIN ONLY)
+                        // =====================
+                        .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
+                        .hasAnyRole("USER", "ADMIN")
 
-// USER + ADMIN GET PLAYERS
-                                .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
-                                .hasAnyRole("USER", "ADMIN")
+                        // =====================
+                        // PLAYER UPDATE (USER + ADMIN)
+                        // =====================
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
+                        .hasAnyRole("USER", "ADMIN")
 
-// USER + ADMIN UPDATE PLAYER
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
-                                .hasAnyRole("USER", "ADMIN")
-
-                                .anyRequest().authenticated()
+                        // =====================
+                        // ANY OTHER REQUEST MUST BE AUTHENTICATED
+                        // =====================
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
 
     @Bean

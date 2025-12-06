@@ -283,5 +283,20 @@ public class PlayerServiceImp implements PlayerService {
                 .toList();
     }
 
+    @Override
+    public List<PlayerResponse> getPlayersByCountry(String country) {
+
+        List<Player> players = playerRepository.findByNationalityIgnoreCase(country);
+
+        if (players.isEmpty()) {
+            throw new ResourceNotFoundException("No players found from country: " + country);
+        }
+
+        return players.stream()
+                .map(PlayerConverter::playerToPlayerResponse)
+                .toList();
+    }
+
+
 
 }
