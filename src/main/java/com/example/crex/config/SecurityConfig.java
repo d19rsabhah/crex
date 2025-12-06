@@ -58,7 +58,8 @@ public class SecurityConfig {
 
 // USER ROLE APIs
                                 .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
-                                .hasRole("USER")
+                                .hasAnyRole("USER", "ADMIN")
+
 
 // ADMIN ROLE APIs
                                 .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")

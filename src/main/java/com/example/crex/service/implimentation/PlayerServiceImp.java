@@ -150,7 +150,7 @@ public class PlayerServiceImp implements PlayerService {
             }
 
             // 6️⃣ Email → PLAYER
-            try {
+         /*   try {
                 String subject1 = "Welcome to CREX! 🎉";
                 String msg1 = "Hello " + savedPlayer.getPlayerName() + ",\n\n" +
                         "You have been successfully added to team: " + team.getTeamName() + "\n" +
@@ -161,6 +161,8 @@ public class PlayerServiceImp implements PlayerService {
             } catch (Exception e) {
                 System.out.println("⚠ Email to PLAYER failed: " + e.getMessage());
             }
+
+          */
 
             // 7️⃣ Email → USER (who added the player)
             try {
