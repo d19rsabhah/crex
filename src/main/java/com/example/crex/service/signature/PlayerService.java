@@ -19,4 +19,6 @@ public interface PlayerService {
 
     List<PlayerResponse> getPlayersByCountry(String country);
 
+    String deletePlayer(Integer playerId, String token);
+
 }

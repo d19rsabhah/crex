@@ -9,6 +9,7 @@ import com.example.crex.exception.ResourceNotFoundException;
 import com.example.crex.model.entity.Player;
 import com.example.crex.model.entity.Team;
 import com.example.crex.model.entity.User;
+import com.example.crex.model.enums.User_Role;
 import com.example.crex.repository.PlayerRepository;
 import com.example.crex.repository.TeamRepository;
 import com.example.crex.repository.UserRepository;
@@ -16,6 +17,7 @@ import com.example.crex.service.signature.EmailService;
 import com.example.crex.service.signature.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -295,6 +297,36 @@ public class PlayerServiceImp implements PlayerService {
         return players.stream()
                 .map(PlayerConverter::playerToPlayerResponse)
                 .toList();
+    }
+
+    @Override
+    public String deletePlayer(Integer playerId, String token) {
+
+        // Clean token
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        token = token.trim();
+
+        // Extract email from JWT
+        String email = jwtService.extractUsername(token);
+
+        // Fetch user and validate role
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getUserRole() != User_Role.ADMIN) {
+            throw new AccessDeniedException("Only ADMIN can delete a player.");
+        }
+
+        // Fetch player
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Player not found"));
+
+        // Delete player
+        playerRepository.delete(player);
+
+        return "Player deleted successfully ✔";
     }
 
 

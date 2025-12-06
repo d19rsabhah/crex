@@ -79,6 +79,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/tournaments/**", "/api/v1/series/**", "/api/v1/matches/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/players/**")
+                        .hasRole("ADMIN")
+
+
                         // =====================
                         // PLAYER GET (USER + ADMIN ONLY)
                         // =====================

@@ -69,4 +69,14 @@ public class PlayerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{playerId}")
+    public ResponseEntity<?> deletePlayer(
+            @PathVariable Integer playerId,
+            @RequestHeader("Authorization") String token) {
+
+        String message = playerService.deletePlayer(playerId, token);
+        return ResponseEntity.ok(message);
+    }
+
+
 }
