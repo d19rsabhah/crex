@@ -27,6 +27,9 @@ public class Series {
     LocalDate startDate;
     LocalDate endDate;
 
+    @Enumerated(EnumType.STRING)
+    private SeriesFormat format;   // ✅ T20I / ODI / TEST
+
     @OneToMany(mappedBy = "series")
     List<CricketMatch> matches;
 }
