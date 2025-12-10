@@ -98,7 +98,22 @@ public class SecurityConfig {
                         // =====================
                         // ANY OTHER REQUEST MUST BE AUTHENTICATED
                         // =====================
-                        .anyRequest().authenticated()
+
+                                // ✅ SERIES APIs
+
+// PUBLIC
+                                .requestMatchers(HttpMethod.GET, "/api/v1/series/all").permitAll()
+
+// USER + ADMIN
+                                .requestMatchers(HttpMethod.GET, "/api/v1/series/*").hasAnyRole("USER", "ADMIN")
+
+// ADMIN ONLY
+                                .requestMatchers(HttpMethod.POST, "/api/v1/series/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/series/**").hasRole("ADMIN")
+
+                                .anyRequest().authenticated()
+
+
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

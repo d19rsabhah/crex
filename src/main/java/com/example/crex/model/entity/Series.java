@@ -1,6 +1,8 @@
 package com.example.crex.model.entity;
 
 
+import com.example.crex.model.enums.SeriesFormat;
+import com.example.crex.model.enums.SeriesOrganizer;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class Series {
 
     @Id
@@ -29,6 +32,10 @@ public class Series {
 
     @Enumerated(EnumType.STRING)
     private SeriesFormat format;   // ✅ T20I / ODI / TEST
+
+    @Enumerated(EnumType.STRING)
+    SeriesOrganizer organizer;
+
 
     @OneToMany(mappedBy = "series")
     List<CricketMatch> matches;
