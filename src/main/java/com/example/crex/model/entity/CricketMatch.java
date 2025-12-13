@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CricketMatch {
+/*public class CricketMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +48,54 @@ public class CricketMatch {
     @JoinColumn(name = "series_id")
     Series series; // nullable
 
+}
+
+ */
+public class CricketMatch {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer matchId;
+
+    @Column(nullable = false)
+    String matchTitle;   // e.g. "IND vs AUS - 1st ODI"
+
+    @Column(nullable = false)
+    String venue;
+
+    @Column(nullable = false)
+    LocalDateTime matchDate;
+
+    // =========================
+    // TEAMS (EXACTLY TWO)
+    // =========================
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "team1_id")
+    Team team1;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "team2_id")
+    Team team2;
+
+    // =========================
+    // MATCH INFO
+    // =========================
+    String tossWinner;    // team name
+    String tossDecision;  // BAT / BOWL
+
+    @Enumerated(EnumType.STRING)
+    MatchStatus status;   // SCHEDULED / LIVE / COMPLETED
+
+    String result;        // "India won by 6 wickets"
+
+    // =========================
+    // RELATION (EITHER ONE)
+    // =========================
+    @ManyToOne
+    @JoinColumn(name = "series_id")
+    Series series;        // nullable
+
+    @ManyToOne
+    @JoinColumn(name = "tournament_id")
+    Tournament tournament; // nullable
 }

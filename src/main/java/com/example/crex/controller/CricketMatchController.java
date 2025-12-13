@@ -1,4 +1,4 @@
 package com.example.crex.controller;
 
-public class MatchController {
+public class CricketMatchController {
 }
