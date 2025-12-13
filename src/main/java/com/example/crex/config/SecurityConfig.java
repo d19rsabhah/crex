@@ -73,6 +73,8 @@ public class SecurityConfig {
                         // ADMIN ONLY
                         .requestMatchers(HttpMethod.POST, "/api/v1/series/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/series/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/series/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/series/**").hasRole("ADMIN")
 
                         // =====================
                         // TEAM APIs

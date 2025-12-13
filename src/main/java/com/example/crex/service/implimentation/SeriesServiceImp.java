@@ -92,5 +92,38 @@ public class SeriesServiceImp implements SeriesService {
 
         seriesRepository.delete(series);
     }
+
+    @Override
+    public SeriesResponse updateSeries(Integer seriesId, SeriesRequest request) {
+
+        // 1️⃣ Fetch existing series
+        Series series = seriesRepository.findById(seriesId)
+                .orElseThrow(() -> new ResourceNotFoundException("Series not found"));
+
+        // 2️⃣ Partial update (PATCH-style)
+        if (request.getTitle() != null)
+            series.setTitle(request.getTitle());
+
+        if (request.getSeason() != null)
+            series.setSeason(request.getSeason());
+
+        if (request.getStartDate() != null)
+            series.setStartDate(request.getStartDate());
+
+        if (request.getEndDate() != null)
+            series.setEndDate(request.getEndDate());
+
+        if (request.getOrganizer() != null)
+            series.setOrganizer(request.getOrganizer());
+
+        if (request.getFormat() != null)
+            series.setFormat(request.getFormat());
+
+        // 3️⃣ Save updated series
+        Series updatedSeries = seriesRepository.save(series);
+
+        // 4️⃣ Convert to response
+        return SeriesConverter.seriesToSeriesResponse(updatedSeries);
+    }
 }
 

@@ -13,4 +13,5 @@ public interface SeriesService {
     List<SeriesResponse> getAllSeries();                                // PUBLIC
 
     void deleteSeries(Integer seriesId, String token);
+    SeriesResponse updateSeries(Integer seriesId, SeriesRequest request);
 }

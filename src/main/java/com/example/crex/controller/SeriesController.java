@@ -52,4 +52,13 @@ public class SeriesController {
         seriesService.deleteSeries(id, token);
         return ResponseEntity.ok("Series deleted successfully");
     }
+    // UPDATE SERIES (ADMIN ONLY)
+    @PutMapping("/{id}")
+    public ResponseEntity<SeriesResponse> updateSeries(
+            @PathVariable Integer id,
+            @RequestBody SeriesRequest request) {
+
+        SeriesResponse response = seriesService.updateSeries(id, request);
+        return ResponseEntity.ok(response);
+    }
 }
