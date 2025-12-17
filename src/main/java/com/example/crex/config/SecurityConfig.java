@@ -106,12 +106,37 @@ public class SecurityConfig {
                         // =====================
                         // ADMIN-ONLY MODULES
                         // =====================
-                        .requestMatchers(
-                                "/api/v1/tournaments/**",
-                                "/api/v1/matches/**"
-                        ).hasRole("ADMIN")
+//                        .requestMatchers(
+//                                "/api/v1/tournaments/**",
+//                                "/api/v1/matches/**"
+//                        ).hasRole("ADMIN")
+                                // =====================
+// MATCH APIs
+// =====================
 
-                        .anyRequest().authenticated()
+// PUBLIC
+                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/all").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/title/**").permitAll()
+
+// USER + ADMIN
+                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/{id}")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .requestMatchers(HttpMethod.POST, "/api/v1/matches")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/matches/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+// ADMIN ONLY
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/matches/**")
+                                .hasRole("ADMIN")
+
+
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
