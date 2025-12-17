@@ -12,15 +12,17 @@ import lombok.experimental.FieldDefaults;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class CricketMatchResponse {
     int matchId;
+    String matchTitle;
     String venue;
     LocalDateTime matchDate;
-    String tossWinner;
-    String tossDecision;
+
+    String team1;
+    String team2;
     MatchStatus status;
     String result;
-    List<String> teamNames;
-    String category;   // "TOURNAMENT" or "SERIES"
-    String categoryTitle;
+    String seriesTitle;       // nullable
+    String tournamentTitle;
 }

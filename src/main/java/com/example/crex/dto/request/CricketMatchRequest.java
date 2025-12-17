@@ -4,20 +4,25 @@ import com.example.crex.model.enums.MatchStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Builder
 public class CricketMatchRequest {
-    LocalDateTime matchDate;
+    String matchTitle;
     String venue;
-    String tossWinner;        // optional
-    String tossDecision;      // optional
-    MatchStatus status;       // SCHEDULED / LIVE / COMPLETED
-    Long tournamentId;        // nullable (match belongs to tournament OR series)
-    Long seriesId;            // nullable
-    List<Long> teamIds;
+    LocalDateTime matchDate;
+
+    int team1Id;
+    int team2Id;
+
+    // Exactly ONE of these must be present
+    int seriesId;        // optional
+    Integer tournamentId;    // optional
 }

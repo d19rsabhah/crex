@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 /*public class CricketMatch {
 
     @Id
@@ -55,7 +55,7 @@ public class CricketMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer matchId;
+    int matchId;
 
     @Column(nullable = false)
     String matchTitle;   // e.g. "IND vs AUS - 1st ODI"
