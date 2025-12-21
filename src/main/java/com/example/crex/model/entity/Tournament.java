@@ -30,8 +30,9 @@ public class Tournament {
     LocalDate endDate;
     String organizer;
 
-    @Column(nullable = false, updatable = false)
-    int createdBy;   // userId
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false, updatable = false)
+    User createdBy;
 
     LocalDateTime createdAt;
 
