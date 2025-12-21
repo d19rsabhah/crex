@@ -1,11 +1,13 @@
 package com.example.crex.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class Tournament {
 
     @Id
@@ -27,6 +30,16 @@ public class Tournament {
     LocalDate endDate;
     String organizer;
 
-    @OneToMany(mappedBy = "tournament")
+    @Column(nullable = false, updatable = false)
+    int createdBy;   // userId
+
+    LocalDateTime createdAt;
+
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "tournament",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     List<CricketMatch> matches;
 }

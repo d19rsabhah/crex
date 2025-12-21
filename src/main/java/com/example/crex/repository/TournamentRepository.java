@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
     Optional<Tournament> findByTitleIgnoreCase(String title);
-
     List<Tournament> findByTitleContainingIgnoreCase(String title);
 }
