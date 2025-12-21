@@ -3,6 +3,7 @@ package com.example.crex.converter;
 import com.example.crex.dto.request.TournamentRequest;
 import com.example.crex.dto.response.TournamentResponse;
 import com.example.crex.model.entity.Tournament;
+import com.example.crex.model.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ public class TournamentConverter {
 
     public static Tournament tournamentRequestToTournament(
             TournamentRequest tournamentRequest,
-            int createdBy
+            User createdBy
     ) {
         return Tournament.builder()
                 .title(tournamentRequest.getTitle())
