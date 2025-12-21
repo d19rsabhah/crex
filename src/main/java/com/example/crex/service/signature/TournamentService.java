@@ -1,19 +1,22 @@
 package com.example.crex.service.signature;
 
-import com.example.crex.model.entity.Tournament;
+import com.example.crex.dto.request.TournamentRequest;
+import com.example.crex.dto.response.TournamentResponse;
+
 
 import java.util.List;
 
 public interface TournamentService {
-    Tournament createTournament(Tournament tournament);
 
-    Tournament updateTournament(int tournamentId, Tournament tournament);
+    TournamentResponse createTournament(TournamentRequest request, String token);
 
-    void deleteTournament(int tournamentId);
+    TournamentResponse updateTournament(int tournamentId, TournamentRequest request, String token);
 
-    Tournament getTournamentById(int tournamentId);
+    void deleteTournament(int tournamentId, String token);
 
-    List<Tournament> searchTournamentByTitle(String title);
+    TournamentResponse getTournamentById(int tournamentId, String token);
 
-    List<Tournament> getAllTournaments();
+    List<TournamentResponse> searchTournamentByTitle(String title);
+
+    List<TournamentResponse> getAllTournaments();
 }
