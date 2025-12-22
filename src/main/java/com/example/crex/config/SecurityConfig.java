@@ -109,7 +109,29 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/matches/**")
                         .hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                                // =====================
+// 🏆 TOURNAMENT APIs
+// =====================
+
+// PUBLIC
+                                .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/all").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/search/name/**").permitAll()
+
+// USER + ADMIN
+                                .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/*")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .requestMatchers(HttpMethod.POST, "/api/v1/tournaments/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/tournaments/**")
+                                .hasAnyRole("USER", "ADMIN")
+
+// ADMIN ONLY
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/tournaments/**")
+                                .hasRole("ADMIN")
+
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
