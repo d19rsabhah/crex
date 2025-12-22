@@ -17,7 +17,7 @@ public class TournamentController {
     private final TournamentService tournamentService;
 
     // CREATE (USER + ADMIN)
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> createTournament(
             @RequestBody TournamentRequest request,
             @RequestHeader("Authorization") String token) {
