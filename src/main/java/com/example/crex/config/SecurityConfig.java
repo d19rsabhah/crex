@@ -60,89 +60,63 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // =====================
-                        // ✅ SERIES APIs (ORDER FIXED)
+                        // SERIES APIs
                         // =====================
-
-                        // PUBLIC
                         .requestMatchers(HttpMethod.GET, "/api/v1/series/all").permitAll()
-
-                        // USER + ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/v1/series/*")
                         .hasAnyRole("USER", "ADMIN")
-
-                        // ADMIN ONLY
                         .requestMatchers(HttpMethod.POST, "/api/v1/series/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/series/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/series/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/series/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/series/**").hasRole("ADMIN")
 
                         // =====================
                         // TEAM APIs
                         // =====================
                         .requestMatchers(HttpMethod.GET, "/api/v1/teams/*")
                         .hasAnyRole("USER", "ADMIN")
-
                         .requestMatchers(HttpMethod.PUT, "/api/v1/teams/**")
                         .hasAnyRole("USER", "ADMIN")
-
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/teams/**")
                         .hasRole("ADMIN")
 
                         // =====================
                         // PLAYER APIs
                         // =====================
-                        .requestMatchers(HttpMethod.POST, "/api/v1/teams/**", "/api/v1/players/**")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
-
                         .requestMatchers(HttpMethod.GET, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
-
                         .requestMatchers(HttpMethod.PUT, "/api/v1/players/**")
                         .hasAnyRole("USER", "ADMIN")
-
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/players/**")
                         .hasRole("ADMIN")
 
                         // =====================
-                        // ADMIN-ONLY MODULES
+                        // MATCH APIs
                         // =====================
-//                        .requestMatchers(
-//                                "/api/v1/tournaments/**",
-//                                "/api/v1/matches/**"
-//                        ).hasRole("ADMIN")
-                                // =====================
-// MATCH APIs
-// =====================
+                        .requestMatchers(HttpMethod.GET, "/api/v1/matches/all").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/title/**").permitAll()
 
-// PUBLIC
-                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/all").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/title/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/matches/*")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/**")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/matches/**")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/matches/**")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/matches/**")
+                        .hasRole("ADMIN")
 
-// USER + ADMIN
-                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/{id}")
-                                .hasAnyRole("USER", "ADMIN")
-
-                                .requestMatchers(HttpMethod.GET, "/api/v1/matches/series/**")
-                                .hasAnyRole("USER", "ADMIN")
-
-                                .requestMatchers(HttpMethod.POST, "/api/v1/matches")
-                                .hasAnyRole("USER", "ADMIN")
-
-                                .requestMatchers(HttpMethod.PUT, "/api/v1/matches/**")
-                                .hasAnyRole("USER", "ADMIN")
-
-// ADMIN ONLY
-                                .requestMatchers(HttpMethod.DELETE, "/api/v1/matches/**")
-                                .hasRole("ADMIN")
-
-
-                                .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
 
 
