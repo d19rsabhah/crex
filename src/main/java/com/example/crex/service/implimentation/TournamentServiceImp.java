@@ -1,5 +1,6 @@
 package com.example.crex.service.implimentation;
 
+import com.example.crex.service.signature.TournamentService;
 import com.example.crex.config.JwtService;
 import com.example.crex.converter.TournamentConverter;
 import com.example.crex.dto.request.TournamentRequest;
@@ -17,11 +18,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 @RequiredArgsConstructor
-class TournamentServiceImpl implements TournamentService {
+public class TournamentServiceImp implements TournamentService {
 
     final TournamentRepository tournamentRepository;
     final JwtService jwtService;
@@ -138,5 +138,5 @@ class TournamentServiceImpl implements TournamentService {
                 .map(TournamentConverter::tournamentToTournamentResponse)
                 .toList();
     }
-}
 
+}
