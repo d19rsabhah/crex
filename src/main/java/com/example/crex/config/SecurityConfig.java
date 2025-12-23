@@ -115,7 +115,7 @@ public class SecurityConfig {
 
 // PUBLIC
                                 .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/all").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/search/name/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/search/**").permitAll()
 
 // USER + ADMIN
                                 .requestMatchers(HttpMethod.GET, "/api/v1/tournaments/*")
